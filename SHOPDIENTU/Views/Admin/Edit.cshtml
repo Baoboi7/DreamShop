@@ -1,0 +1,93 @@
+﻿@model SHOPDIENTU.Models.Product
+
+<h2 class="text-center mt-3">Chỉnh sửa sản phẩm</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data" style="width:60%;margin:auto;">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group mt-2">
+        <label>Tên sản phẩm</label>
+        <input asp-for="Name" class="form-control" required />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-2">
+        <label>Giá (VNĐ)</label>
+        <div class="input-group">
+            <input asp-for="Price" id="priceInput" type="text" class="form-control" required placeholder="Nhập giá, ví dụ: 15.000.000đ" />
+            <span class="input-group-text">đ</span>
+        </div>
+        <div class="form-group mt-2">
+            <label>Giảm giá (%)</label>
+            <input asp-for="Discount" class="form-control" type="number" min="0" max="100" placeholder="Nhập phần trăm giảm giá (VD: 10)" />
+            <span asp-validation-for="Discount" class="text-danger"></span>
+        </div>
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-2">
+        <label>Ảnh sản phẩm</label>
+        <input type="file" name="ImageFile" class="form-control" />
+        @if (!string.IsNullOrEmpty(Model.Image))
+        {
+            <div class="mt-2">
+                <img src="@Model.Image" width="100" class="border rounded" />
+                <p class="text-muted mt-1">Ảnh hiện tại</p>
+            </div>
+        }
+    </div>
+
+    <div class="form-group mt-2">
+        <label>Danh mục</label>
+        <input asp-for="Category" class="form-control" />
+    </div>
+
+    <div class="form-group mt-2">
+        <label>Hãng</label>
+        <input asp-for="Brand" class="form-control" />
+    </div>
+
+    <div class="form-group mt-2">
+        <label>Mô tả</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+
+    <div class="text-center mt-4">
+        <button type="submit" class="btn btn-success px-4">💾 Cập nhật</button>
+        <a href="/Admin/Index" class="btn btn-secondary px-4">⬅ Quay lại</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        const priceInput = document.getElementById("priceInput");
+
+        // ✅ Hiển thị lại giá theo định dạng Việt Nam khi vào trang
+        window.addEventListener("DOMContentLoaded", function () {   
+            let value = priceInput.value.replace(/\D/g, "");
+            if (value) {
+                priceInput.value = Number(value).toLocaleString("vi-VN") + "đ";
+            }
+        });
+
+        // ✅ Khi người dùng nhập, tự động thêm dấu chấm phân cách
+        priceInput.addEventListener("input", function () {
+            let value = this.value.replace(/\D/g, ""); // xóa ký tự không phải số
+            if (value) {
+                this.value = Number(value).toLocaleString("vi-VN") + "đ";
+            } else {
+                this.value = "";
+            }
+        });
+
+        // ✅ Trước khi submit, loại bỏ dấu chấm và ký tự đ để gửi số "sạch"
+        document.querySelector("form").addEventListener("submit", function () {
+            const cleaned = priceInput.value.replace(/[^\d]/g, ""); // chỉ giữ số
+            priceInput.value = cleaned;
+        });
+    </script>
+}

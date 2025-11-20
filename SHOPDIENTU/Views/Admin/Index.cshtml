@@ -1,0 +1,98 @@
+﻿@model IEnumerable<SHOPDIENTU.Models.Product>
+@{
+    var users = ViewBag.Users as List<SHOPDIENTU.Models.User>;
+}
+
+<h2 class="text-center mt-3">Trang Quản Trị DreamShop</h2>
+
+<!-- 🆕 Thanh chuyển tab -->
+<ul class="nav nav-tabs justify-content-center my-3" id="adminTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="products-tab" data-bs-toggle="tab" data-bs-target="#products" type="button" role="tab">📦 Sản phẩm</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">👥 Người dùng</button>
+    </li>
+</ul>
+
+<div class="tab-content mt-3">
+    <!-- =================== TAB SẢN PHẨM =================== -->
+    <div class="tab-pane fade show active" id="products" role="tabpanel">
+        <div class="text-center mb-3">
+            <a href="/Admin/Create" class="btn btn-success">+ Thêm sản phẩm mới</a>
+        </div>
+
+        <table class="table table-bordered table-striped w-90 mx-auto">
+            <thead>
+                <tr style="background-color:#f8f8f8;">
+                    <th>STT</th>
+                    <th>Tên</th>
+                    <th>Giá</th>
+                    <th>Giảm giá (%)</th>
+                    <th>Hãng</th>
+                    <th>Danh mục</th>
+                    <th>Ảnh</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int index = 1;
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@index</td>
+                        <td>@item.Name</td>
+                        <td>@String.Format("{0:N0} ₫", item.Price)</td>
+                        <td>@(item.Discount > 0 ? $"{item.Discount}%" : "0%")</td>
+                        <td>@item.Brand</td>
+                        <td>@item.Category</td>
+                        <td><img src="@item.Image" width="80" class="border rounded" /></td>
+                        <td>
+                            <a href="/Admin/Edit/@item.Id" class="btn btn-warning btn-sm">Sửa</a>
+                            <a href="/Admin/Delete/@item.Id" class="btn btn-danger btn-sm"
+                               onclick="return confirm('Bạn có chắc muốn xóa không?');">Xóa</a>
+                        </td>
+                    </tr>
+                    index++;
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- =================== 🆕 TAB NGƯỜI DÙNG =================== -->
+    <div class="tab-pane fade" id="users" role="tabpanel">
+        <h4 class="text-center my-3">Danh sách tài khoản người dùng</h4>
+        <table class="table table-bordered table-hover w-75 mx-auto">
+            <thead class="table-light">
+                <tr>
+                    <th>STT</th>
+                    <th>Tên đăng nhập</th>
+                    <th>Email</th>
+                    <th>Vai trò</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int uIndex = 1;
+                }
+                @foreach (var u in users)
+                {
+                    <tr>
+                        <td>@uIndex</td>
+                        <td>@u.Username</td>
+                        <td>@u.Email</td>
+                        <td>@u.Role</td>
+                        <td>
+                            <a href="/Admin/DeleteUser/@u.Id" class="btn btn-danger btn-sm"
+                               onclick="return confirm('Xóa tài khoản này?');">Xóa</a>
+                        </td>
+                    </tr>
+                    uIndex++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

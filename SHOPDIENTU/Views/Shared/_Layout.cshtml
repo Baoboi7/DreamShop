@@ -1,0 +1,261 @@
+﻿@*
+    _Layout.cshtml - DreamShop (bản tối ưu)
+    Gọn gàng, responsive, có banner tự chuyển ảnh
+*@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - DreamShop</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        /* 🔹 HEADER */
+        header {
+            background: linear-gradient(180deg, #ffd6dc 0%, #ffb6c1 100%);
+            color: #fff;
+            padding: 8px 0;
+            box-shadow: 0 4px 10px rgba(255, 182, 193, 0.6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ff2e74;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+            .logo:hover {
+                color: #ff007f;
+                text-shadow: 0 0 8px rgba(255, 105, 180, 0.8);
+            }
+
+        .search-form input {
+            width: 100%;
+            border-radius: 25px;
+            border: 1px solid #fff;
+            padding: 9px 15px;
+            font-size: 15px;
+            box-shadow: 0 3px 6px rgba(255, 182, 193, 0.5);
+            transition: all 0.25s ease-in-out;
+        }
+
+            .search-form input:focus {
+                border-color: #fff;
+                box-shadow: 0 4px 8px rgba(255, 192, 203, 0.8);
+            }
+
+        /* 🔸 Nút Giỏ hàng / Tài khoản */
+        header .btn {
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(255, 182, 193, 0.4);
+        }
+
+        header .btn-light {
+            background: white;
+            color: #ff2e74;
+            border: 1px solid #ffc6d0;
+        }
+
+            header .btn-light:hover {
+                background: #ff4d84;
+                color: white;
+                border-color: #ff4d84;
+                transform: scale(1.05);
+            }
+
+        header .btn-outline-danger {
+            color: #ff2e74;
+            border-color: #ff2e74;
+            background: white;
+        }
+
+            header .btn-outline-danger:hover {
+                background: #ff2e74;
+                color: white;
+                transform: scale(1.05);
+            }
+
+        /* 🔹 BANNER */
+        .banner-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            background: transparent;
+            margin: 20px 0;
+        }
+
+        .banner-slide {
+            position: relative;
+            width: 1200px;
+            height: 350px;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+            .banner-slide img {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                object-fit: cover; /* Giúp ảnh luôn kín khung */
+                transition: opacity 1s ease-in-out;
+                opacity: 0;
+            }
+
+                .banner-slide img.active {
+                    opacity: 1;
+                }
+
+        footer {
+            background: #222;
+            color: #aaa;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+            font-size: 14px;
+        }
+
+        @@media (max-width: 768px) {
+            .search-form {
+                margin: 10px 0;
+            }
+
+            .banner-slide {
+                width: 100%;
+                height: 250px;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="shadow-sm py-2">
+        <div class="container d-flex align-items-center justify-content-between" style="max-width:1200px;">
+            <a asp-controller="Home" asp-action="Index" class="logo fw-bold">DreamShop</a>
+
+            <form class="search-form flex-grow-1 mx-4" style="max-width:400px;">
+                <input type="text" class="form-control" placeholder="Bạn muốn mua gì hôm nay?" />
+            </form>
+
+            <div class="d-flex align-items-center gap-2">
+                <a class="btn btn-light px-3 fw-semibold" asp-controller="Cart" asp-action="Index">🛒 Giỏ hàng</a>
+
+                @if (Context.Session.GetString("User") == null)
+                {
+                    <a class="btn btn-outline-danger px-3 fw-semibold" data-bs-toggle="modal" data-bs-target="#loginModal">👤 Tài khoản</a>
+                }
+                else
+                {
+                    <div class="dropdown">
+                        <button class="btn btn-danger dropdown-toggle text-white px-3 fw-semibold"
+                                type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                            👤 @Context.Session.GetString("User")
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                            <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">Đăng xuất</a></li>
+                        </ul>
+                    </div>
+                }
+            </div>
+        </div>
+    </header>
+
+    @* Chỉ hiện banner ở trang chủ hoặc trang sản phẩm *@
+    @{
+        var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+        var action = ViewContext.RouteData.Values["action"]?.ToString();
+    }
+
+    @if ((controller == "Home" && action == "Index") ||
+        (controller == "Products" && action == "Index") ||
+        (controller == "Products" && action == "Category"))
+    {
+        <div class="banner-container">
+            <div class="banner-slide">
+                <img src="/Banner/banne1.jpg" alt="Khuyến mãi 1" class="active" />
+                <img src="/Banner/banne2.jpg" alt="Khuyến mãi 2" />
+                <img src="/Banner/banne3.jpg" alt="Khuyến mãi 3" />
+            </div>
+        </div>
+    }
+
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+
+    <footer>
+        © 2025 DreamShop — Thiết kế bởi <strong>Bảo Gia</strong>
+    </footer>
+
+    <!-- 🔹 Modal Đăng nhập -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-4" style="border-radius: 15px; background: #fff0f5;">
+                <h4 class="text-center text-danger mb-3">Đăng nhập tài khoản</h4>
+                <form asp-controller="Account" asp-action="Login" method="post">
+                    <input type="text" name="username" class="form-control mb-2" placeholder="Tên đăng nhập" required />
+                    <input type="password" name="password" class="form-control mb-3" placeholder="Mật khẩu" required />
+                    <button type="submit" class="btn btn-danger w-100">Đăng nhập</button>
+                    <p class="text-center mt-2">
+                        Chưa có tài khoản?
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#registerModal" data-bs-dismiss="modal">Đăng ký ngay</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔹 Modal Đăng ký -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-4" style="border-radius: 15px; background: #fff0f5;">
+                <h4 class="text-center text-danger mb-3">Đăng ký tài khoản</h4>
+                <form asp-controller="Account" asp-action="Register" method="post">
+                    <input type="text" name="Username" class="form-control mb-2" placeholder="Tên đăng nhập" required />
+                    <input type="password" name="Password" class="form-control mb-2" placeholder="Mật khẩu" required />
+                    <input type="text" name="Email" class="form-control mb-3" placeholder="Email (tùy chọn)" />
+                    <button type="submit" class="btn btn-danger w-100">Đăng ký</button>
+                    <p class="text-center mt-2">
+                        Đã có tài khoản?
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">Đăng nhập</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- 🔁 Script tự động chuyển banner -->
+    <script>
+        const slides = document.querySelectorAll('.banner-slide img');
+        let currentIndex = 0;
+
+        if (slides.length > 0) {
+            setInterval(() => {
+                slides[currentIndex].classList.remove('active');
+                currentIndex = (currentIndex + 1) % slides.length;
+                slides[currentIndex].classList.add('active');
+            }, 4000);
+        }
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

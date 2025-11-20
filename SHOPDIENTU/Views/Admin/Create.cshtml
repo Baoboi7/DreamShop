@@ -1,0 +1,74 @@
+﻿@model SHOPDIENTU.Models.Product
+
+<h2 class="text-center mt-3">Thêm sản phẩm mới</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data" style="width:60%;margin:auto;">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-group mt-3">
+        <label>Tên sản phẩm</label>
+        <input asp-for="Name" class="form-control" required placeholder="Nhập tên sản phẩm..." />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3">
+        <label>Giá (VNĐ)</label>
+        <div class="input-group">
+            <input asp-for="Price" id="priceInput" type="text" class="form-control" required placeholder="VD: 15.000.000đ" />
+            <span class="input-group-text">đ</span>
+        </div>
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3">
+        <label>Danh mục</label>
+        <input asp-for="Category" class="form-control" placeholder="VD: Phone, Laptop, Tablet..." />
+    </div>
+
+    <div class="form-group mt-3">
+        <label>Hãng</label>
+        <input asp-for="Brand" class="form-control" placeholder="VD: Apple, Samsung..." />
+    </div>
+
+    <div class="form-group mt-3">
+        <label>Mô tả</label>
+        <textarea asp-for="Description" class="form-control" rows="3" placeholder="Mô tả sản phẩm..."></textarea>
+    </div>
+
+    <div class="form-group mt-3">
+        <label>Ảnh sản phẩm</label>
+        <input asp-for="ImageFile" type="file" class="form-control" />
+        <span asp-validation-for="ImageFile" class="text-danger"></span>
+    </div>
+
+    <div class="text-center mt-4">
+        <button type="submit" class="btn btn-success px-4">💾 Lưu</button>
+        <a asp-action="Index" class="btn btn-secondary px-4">⬅ Quay lại</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        const priceInput = document.getElementById("priceInput");
+
+        // ✅ Khi người dùng nhập, tự động thêm dấu . phân cách
+        priceInput.addEventListener("input", function () {
+            let value = this.value.replace(/\D/g, ""); // Xóa ký tự không phải số
+            if (value) {
+                this.value = Number(value).toLocaleString("vi-VN") + "đ";
+            } else {
+                this.value = "";
+            }
+        });
+
+        // ✅ Trước khi submit, loại bỏ dấu chấm và chữ đ
+        document.querySelector("form").addEventListener("submit", function () {
+            const cleaned = priceInput.value.replace(/[^\d]/g, ""); // chỉ giữ lại số
+            priceInput.value = cleaned;
+        });
+    </script>
+}

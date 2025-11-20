@@ -1,0 +1,62 @@
+﻿@{
+    ViewData["Title"] = "Đăng ký tài khoản";
+}
+
+<div class="register-container">
+    <h2>Tạo tài khoản mới</h2>
+
+    <form asp-action="Register" method="post">
+        <input type="text" name="Username" placeholder="Tên đăng nhập" required />
+        <input type="password" name="Password" placeholder="Mật khẩu" required />
+        <input type="text" name="Email" placeholder="Email (tùy chọn)" />
+        <button type="submit">Đăng ký</button>
+
+        <p class="text-danger">@ViewBag.Error</p>
+        <p class="text-success">@TempData["msg"]</p>
+
+        <p>Đã có tài khoản? <a asp-action="Login">Đăng nhập ngay</a></p>
+    </form>
+</div>
+
+<style>
+    .register-container {
+        max-width: 400px;
+        margin: 60px auto;
+        background: #fff0f5;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(255, 182, 193, 0.4);
+        text-align: center;
+    }
+
+        .register-container h2 {
+            color: #ff4081;
+            margin-bottom: 20px;
+        }
+
+        .register-container input {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ffc1d3;
+            border-radius: 8px;
+        }
+
+        .register-container button {
+            width: 100%;
+            background: #ff80aa;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+            .register-container button:hover {
+                background: #ff4d84;
+            }
+
+    a {
+        color: #ff4d84;
+    }
+</style>
