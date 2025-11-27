@@ -1,0 +1,25 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Chuyển khoản ngân hàng";
+}
+
+<div style="width:60%;margin:20px auto;background:#fff;padding:25px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+
+    <h2>💰 Thanh toán chuyển khoản ngân hàng</h2>
+
+    <p>Vui lòng chuyển khoản theo thông tin sau:</p>
+
+    <ul style="font-size:18px; line-height:32px;">
+        <li><b>Ngân hàng:</b> Vietcombank</li>
+        <li><b>Số tài khoản:</b> 1055652265</li>
+        <li><b>Chủ tài khoản:</b> NGO LE GIA BAO</li>
+        <li><b>Nội dung:</b> Thanh toán đơn hàng @Guid.NewGuid()</li>
+        <li><b>Số tiền:</b> @ViewBag.Total.ToString("N0") đ</li>
+    </ul>
+
+    <a href="/Checkout/ConfirmOrder" class="btn btn-success"
+       style="margin-top:25px;width:100%;padding:14px;border-radius:8px;font-size:18px;text-align:center;display:block;">
+        Tôi đã chuyển khoản
+    </a>
+
+</div>

@@ -1,0 +1,160 @@
+﻿@model List<SHOPDIENTU.Models.CartItem>
+
+<div class="cart-wrapper">
+    <h2>Giỏ hàng của bạn</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="empty-cart">
+            <p>🛍 Giỏ hàng trống. Hãy thêm sản phẩm để tiếp tục mua sắm!</p>
+            <a href="/" class="btn-back">⬅ Quay lại mua hàng</a>
+        </div>
+    }
+    else
+    {
+        <div class="cart-list">
+            @foreach (var item in Model)
+            {
+                <div class="cart-item">
+                    <div class="cart-info">
+                        <h4>@item.Product.Name</h4>
+                        <p class="price">@String.Format("{0:N0}₫", item.Product.Price)</p>
+                        <div class="quantity-box">
+                            <button>-</button>
+                            <span>@item.Quantity</span>
+                            <button>+</button>
+                        </div>
+                    </div>
+                    <a href="@Url.Action("Remove", "Cart", new { id = item.Product.Id })" class="delete-btn">🗑</a>
+                </div>
+            }
+        </div>
+
+        <div class="cart-bottom">
+            <div class="summary">
+                <p>
+                    Tạm tính:
+                    <strong>@String.Format("{0:N0}₫", Model.Sum(p => p.Product.Price * p.Quantity))</strong>
+                </p>
+            </div>
+            <a href="@Url.Action("Checkout", "Cart")" class="btn-buy">
+                Mua ngay (@Model.Count)
+            </a>
+        </div>
+    }
+</div>
+
+<style>
+    .cart-wrapper {
+        max-width: 800px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    h2 {
+        text-align: center;
+        color: #c2185b;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .cart-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #f2f2f2;
+        padding: 15px 0;
+    }
+
+    .cart-info {
+        flex: 1;
+        margin-left: 20px;
+    }
+
+        .cart-info h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+    .price {
+        color: #e91e63;
+        font-weight: bold;
+    }
+
+    .quantity-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 8px;
+    }
+
+        .quantity-box button {
+            background: #fce4ec;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+            .quantity-box button:hover {
+                background: #f8bbd0;
+            }
+
+    .delete-btn {
+        color: #b71c1c;
+        text-decoration: none;
+        font-size: 18px;
+    }
+
+    .cart-bottom {
+        position: sticky;
+        bottom: 0;
+        background: #fff;
+        padding: 15px;
+        margin-top: 20px;
+        border-top: 2px solid #f8bbd0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .summary p {
+        font-size: 16px;
+    }
+
+    .btn-buy {
+        background: #e91e63;
+        color: #fff;
+        padding: 10px 25px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        .btn-buy:hover {
+            background: #f06292;
+        }
+
+    .empty-cart {
+        text-align: center;
+        padding: 40px;
+    }
+
+    .btn-back {
+        background: #e91e63;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 10px;
+        text-decoration: none;
+    }
+
+        .btn-back:hover {
+            background: #f06292;
+        }
+</style>

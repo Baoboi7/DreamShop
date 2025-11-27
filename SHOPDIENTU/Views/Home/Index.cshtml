@@ -10,7 +10,6 @@
         margin: 0;
     }
 
-    /* ===== CATEGORY BAR ===== */
     .category-bar {
         background: linear-gradient(180deg, #fff 0%, #ffe4e8 100%);
         border-top: 1px solid #eee;
@@ -26,13 +25,13 @@
     }
 
 
-        /* ===== Nút danh mục ===== */
+        
         .category-bar button {
             border: 1.5px solid #d70018;
             background: #fff;
             color: #d70018;
             padding: 7px 16px;
-            border-radius: 30px; /* bo tròn nhẹ */
+            border-radius: 30px; 
             font-weight: 500;
             cursor: pointer;
             transition: all 0.25s ease;
@@ -47,7 +46,7 @@
             }
 
 
-    /* Product section */
+    
     .product-grid {
         display: flex;
         flex-wrap: wrap;
@@ -130,7 +129,7 @@
             background: #b00015;
         }
 
-    /* Footer */
+    
     .footer {
         background-color: #222;
         color: #aaa;
@@ -141,7 +140,7 @@
     }
 </style>
 
-<!-- Category bar (đã bỏ Trang chủ) -->
+
 <div class="category-bar">
     @foreach (var cat in ViewBag.Categories as List<string>)
     {
@@ -149,7 +148,6 @@
     }
 </div>
 
-<!-- Product Grid -->
 <div class="product-grid">
     @foreach (var p in Model)
     {

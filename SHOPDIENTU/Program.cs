@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 🔹 Thêm hỗ trợ session
+// ✅ [THÊM MỚI] Bật hỗ trợ session để lưu giỏ hàng, người dùng, v.v.
 builder.Services.AddSession();
 
 // Add services to the container.
@@ -35,11 +35,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// 🔹 Kích hoạt session
+// ✅ [THÊM MỚI] Kích hoạt session trước khi xác thực và routing
 app.UseSession();
 
 app.UseAuthorization();
 
+// 🔹 Route mặc định
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

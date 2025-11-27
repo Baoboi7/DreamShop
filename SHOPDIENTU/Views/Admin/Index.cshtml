@@ -1,11 +1,11 @@
 ﻿@model IEnumerable<SHOPDIENTU.Models.Product>
 @{
     var users = ViewBag.Users as List<SHOPDIENTU.Models.User>;
+    var orders = ViewBag.Orders as List<SHOPDIENTU.Models.Order>;
 }
 
 <h2 class="text-center mt-3">Trang Quản Trị DreamShop</h2>
 
-<!-- 🆕 Thanh chuyển tab -->
 <ul class="nav nav-tabs justify-content-center my-3" id="adminTabs" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="products-tab" data-bs-toggle="tab" data-bs-target="#products" type="button" role="tab">📦 Sản phẩm</button>
@@ -13,10 +13,14 @@
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">👥 Người dùng</button>
     </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab">🧾 Đơn hàng</button>
+    </li>
 </ul>
 
 <div class="tab-content mt-3">
-    <!-- =================== TAB SẢN PHẨM =================== -->
+
+    <!-- ================= SẢN PHẨM ================= -->
     <div class="tab-pane fade show active" id="products" role="tabpanel">
         <div class="text-center mb-3">
             <a href="/Admin/Create" class="btn btn-success">+ Thêm sản phẩm mới</a>
@@ -61,7 +65,8 @@
         </table>
     </div>
 
-    <!-- =================== 🆕 TAB NGƯỜI DÙNG =================== -->
+
+    <!-- ================= NGƯỜI DÙNG ================= -->
     <div class="tab-pane fade" id="users" role="tabpanel">
         <h4 class="text-center my-3">Danh sách tài khoản người dùng</h4>
         <table class="table table-bordered table-hover w-75 mx-auto">
@@ -95,4 +100,51 @@
             </tbody>
         </table>
     </div>
+
+
+    <div class="tab-pane fade" id="orders" role="tabpanel">
+        <h4 class="text-center my-3">Danh sách đơn hàng</h4>
+
+        <table class="table table-bordered table-hover w-90 mx-auto">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Khách hàng</th>
+                    <th>Điện thoại</th>
+                    <th>Địa chỉ</th>
+                    <th>Ngày đặt</th>
+                    <th>Tổng tiền</th>
+                    <th>Phương thức</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (orders != null && orders.Any())
+                {
+                    foreach (var order in orders)
+                    {
+                        <tr>
+                            <td>@order.Id</td>
+                            <td>@order.CustomerName</td>
+                            <td>@order.Phone</td>
+                            <td>@order.Address</td>
+                            <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@String.Format("{0:N0} ₫", order.TotalAmount)</td>
+                            <td>@order.PaymentMethod</td>
+                            <td>
+                                <a href="/Admin/OrderDetails/@order.Id" class="btn btn-info btn-sm">Chi tiết</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center text-muted">Chưa có đơn hàng nào</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
 </div>

@@ -1,0 +1,333 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@model SHOPDIENTU.Models.CheckoutInfo
+@{
+    ViewData["Title"] = "Thông tin giao hàng";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+    main.pb-3 {
+        padding-bottom: 0 !important;
+    }
+
+    .checkout-wrapper {
+        width: 70%;
+        margin: 35px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+    }
+
+    .steps {
+        display: flex;
+        margin-bottom: 25px;
+    }
+
+    .step {
+        flex: 1;
+        text-align: center;
+        padding: 12px;
+        font-size: 18px;
+        font-weight: 600;
+        border-bottom: 3px solid #eee;
+        cursor: pointer;
+    }
+
+        .step.active {
+            color: #d70018;
+            border-color: #d70018;
+        }
+
+    .section-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #d70018;
+        margin-bottom: 15px;
+    }
+
+    .field-label {
+        font-size: 15px;
+        margin-bottom: 4px;
+        font-weight: 500;
+    }
+
+    .input-box {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        margin-bottom: 12px;
+    }
+
+    .ship-methods {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .method-box {
+        padding: 12px 18px;
+        border-radius: 10px;
+        background: #f1f1f1;
+        cursor: pointer;
+        font-weight: 600;
+        border: 2px solid transparent;
+        transition: .2s;
+    }
+
+        .method-box.active {
+            border-color: #d70018;
+            background: #ffeaea;
+        }
+
+    .form-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 10px;
+    }
+
+    .btn-continue {
+        width: 100%;
+        background: #d70018;
+        color: white;
+        padding: 14px;
+        text-align: center;
+        font-size: 17px;
+        font-weight: bold;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        margin-top: 15px;
+    }
+</style>
+
+
+<div class="checkout-wrapper">
+
+    <div class="steps">
+        <div class="step active">1. Thông tin</div>
+        <div class="step">2. Thanh toán</div>
+    </div>
+
+    <!-- ⭐ FORM ĐƯỢC THÊM ID -->
+    <form id="checkoutForm" asp-action="Info" method="post">
+
+        <input type="hidden" id="Address" name="Address" />
+
+        <div class="section-title">Thông tin người nhận</div>
+
+        <label class="field-label">Họ tên</label>
+        <input asp-for="FullName" class="input-box" placeholder="Họ và tên" />
+
+        <label class="field-label">Số điện thoại</label>
+        <input asp-for="Phone" class="input-box" placeholder="Nhập số điện thoại" />
+
+        <label class="field-label">Email</label>
+        <input asp-for="Email" class="input-box" placeholder="Nhập Email" />
+
+        <div class="section-title">Hình thức nhận hàng</div>
+
+        <div class="ship-methods">
+            <div id="storeMethod" class="method-box active" onclick="selectMethod('store')">Nhận tại cửa hàng</div>
+            <div id="deliveryMethod" class="method-box" onclick="selectMethod('delivery')">Giao hàng tận nơi</div>
+        </div>
+
+        <input type="hidden" id="ShippingMethod" name="ShippingMethod" value="store" />
+
+        <!-- STORE -->
+        <div id="storeForm">
+            <label class="field-label">Chọn tỉnh</label>
+            <select id="provinceStore" class="input-box"></select>
+
+            <label class="field-label">Chọn huyện</label>
+            <select id="districtStore" class="input-box"></select>
+
+            <label class="field-label">Chọn xã</label>
+            <select id="wardStore" class="input-box"></select>
+
+            <label class="field-label">Cửa hàng</label>
+            <select asp-for="StoreAddress" class="input-box">
+                <option>17 Nguyễn Huệ, Phường 6, Tuy Hòa, Phú Yên</option>
+                <option>258 Hoàng Hoa Thám, Phường 7, Tuy Hòa, Phú Yên</option>
+                <option>07 Trường Chinh, Phường 8, Tuy Hòa, Phú Yên</option>
+            </select>
+
+            <input type="hidden" id="StoreProvinceInput" name="StoreProvince" />
+            <input type="hidden" id="StoreDistrictInput" name="StoreDistrict" />
+            <input type="hidden" id="StoreWardInput" name="StoreWard" />
+        </div>
+
+        <!-- DELIVERY -->
+        <div id="deliveryForm" style="display:none;">
+
+            <div class="form-row">
+                <div>
+                    <label class="field-label">Tỉnh / Thành phố</label>
+                    <select id="province" class="input-box"></select>
+                </div>
+
+                <div>
+                    <label class="field-label">Quận / Huyện</label>
+                    <select id="district" class="input-box"></select>
+                </div>
+
+                <div>
+                    <label class="field-label">Phường / Xã</label>
+                    <select id="ward" class="input-box"></select>
+                </div>
+            </div>
+
+            <label class="field-label">Địa chỉ giao hàng</label>
+            <input asp-for="DeliveryAddress" class="input-box" placeholder="Số nhà, đường..." />
+
+            <input type="hidden" id="ProvinceInput" name="Province" />
+            <input type="hidden" id="DistrictInput" name="District" />
+            <input type="hidden" id="WardInput" name="Ward" />
+        </div>
+
+        <input type="hidden" id="FinalAddress" />
+
+        <button class="btn-continue">Tiếp tục ➜</button>
+    </form>
+</div>
+
+
+@section Scripts {
+    <script>
+
+        const province = document.getElementById("province");
+        const district = document.getElementById("district");
+        const ward = document.getElementById("ward");
+
+        const provinceStore = document.getElementById("provinceStore");
+        const districtStore = document.getElementById("districtStore");
+        const wardStore = document.getElementById("wardStore");
+
+        async function loadProvinces() {
+            let data = await fetch("https://provinces.open-api.vn/api/p/")
+                .then(res => res.json());
+
+            data.forEach(p => {
+                let opt = "<option value='" + p.code + "'>" + p.name + "</option>";
+                province.innerHTML += opt;
+                provinceStore.innerHTML += opt;
+            });
+        }
+
+        loadProvinces();
+
+        province.onchange = async () => {
+            let id = province.value;
+            district.innerHTML = "<option>-- Chọn huyện --</option>";
+            ward.innerHTML = "<option>-- Chọn xã --</option>";
+
+            let data = await fetch("https://provinces.open-api.vn/api/p/" + id + "?depth=2")
+                .then(res => res.json());
+
+            data.districts.forEach(d => {
+                district.innerHTML += "<option value='" + d.code + "'>" + d.name + "</option>";
+            });
+
+            ProvinceInput.value = province.options[province.selectedIndex].text;
+        }
+
+        district.onchange = async () => {
+            let id = district.value;
+            ward.innerHTML = "<option>-- Chọn xã --</option>";
+
+            let data = await fetch("https://provinces.open-api.vn/api/d/" + id + "?depth=2")
+                .then(res => res.json());
+
+            data.wards.forEach(w => {
+                ward.innerHTML += "<option value='" + w.code + "'>" + w.name + "</option>";
+            });
+
+            DistrictInput.value = district.options[district.selectedIndex].text;
+        }
+
+        ward.onchange = () => {
+            WardInput.value = ward.options[ward.selectedIndex].text;
+        }
+
+        provinceStore.onchange = async () => {
+            let id = provinceStore.value;
+            districtStore.innerHTML = "<option>-- Chọn huyện --</option>";
+            wardStore.innerHTML = "<option>-- Chọn xã --</option>";
+
+            let data = await fetch("https://provinces.open-api.vn/api/p/" + id + "?depth=2")
+                .then(res => res.json());
+
+            data.districts.forEach(d => {
+                districtStore.innerHTML += "<option value='" + d.code + "'>" + d.name + "</option>";
+            });
+
+            StoreProvinceInput.value = provinceStore.options[provinceStore.selectedIndex].text;
+        }
+
+        districtStore.onchange = async () => {
+            let id = districtStore.value;
+            wardStore.innerHTML = "<option>-- Chọn xã --</option>";
+
+            let data = await fetch("https://provinces.open-api.vn/api/d/" + id + "?depth=2")
+                .then(res => res.json());
+
+            data.wards.forEach(w => {
+                wardStore.innerHTML += "<option value='" + w.code + "'>" + w.name + "</option>";
+            });
+
+            StoreDistrictInput.value = districtStore.options[districtStore.selectedIndex].text;
+        }
+
+        wardStore.onchange = () => {
+            StoreWardInput.value = wardStore.options[wardStore.selectedIndex].text;
+        }
+
+        function selectMethod(type) {
+            if (type === "store") {
+                storeForm.style.display = "block";
+                deliveryForm.style.display = "none";
+            } else {
+                storeForm.style.display = "none";
+                deliveryForm.style.display = "block";
+            }
+
+            storeMethod.classList.toggle("active", type === "store");
+            deliveryMethod.classList.toggle("active", type === "delivery");
+
+            ShippingMethod.value = type;
+        }
+
+        // ⭐ FORM SUBMIT – GIỜ CHẮC CHẮN CHẠY
+        document.getElementById("checkoutForm").addEventListener("submit", function () {
+
+            if (ShippingMethod.value === "store") {
+
+                let province = StoreProvinceInput.value;
+                let district = StoreDistrictInput.value;
+                let ward = StoreWardInput.value;
+                let store = document.querySelector("[name='StoreAddress']").value;
+
+                let full = store + ", " + ward + ", " + district + ", " + province;
+
+                document.querySelector("#Address").value = full;
+            }
+
+            else {
+
+                let province = ProvinceInput.value;
+                let district = DistrictInput.value;
+                let ward = WardInput.value;
+                let home = document.querySelector("[name='DeliveryAddress']").value;
+
+                let full = home + ", " + ward + ", " + district + ", " + province;
+
+                document.querySelector("#Address").value = full;
+            }
+        });
+    </script>
+}

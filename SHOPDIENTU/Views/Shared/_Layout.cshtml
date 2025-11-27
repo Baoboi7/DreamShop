@@ -1,6 +1,5 @@
 ﻿@*
-    _Layout.cshtml - DreamShop (bản tối ưu)
-    Gọn gàng, responsive, có banner tự chuyển ảnh
+  
 *@
 <!DOCTYPE html>
 <html lang="vi">
@@ -12,12 +11,24 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
             font-family: 'Roboto', sans-serif;
             background-color: #f9f9f9;
         }
 
-        /* 🔹 HEADER */
+        .main-content {
+            flex: 1;
+        }
+
         header {
             background: linear-gradient(180deg, #ffd6dc 0%, #ffb6c1 100%);
             color: #fff;
@@ -56,7 +67,6 @@
                 box-shadow: 0 4px 8px rgba(255, 192, 203, 0.8);
             }
 
-        /* 🔸 Nút Giỏ hàng / Tài khoản */
         header .btn {
             border-radius: 12px;
             font-weight: 600;
@@ -89,7 +99,6 @@
                 transform: scale(1.05);
             }
 
-        /* 🔹 BANNER */
         .banner-container {
             width: 100%;
             display: flex;
@@ -111,7 +120,7 @@
                 position: absolute;
                 width: 100%;
                 height: 100%;
-                object-fit: cover; /* Giúp ảnh luôn kín khung */
+                object-fit: cover;
                 transition: opacity 1s ease-in-out;
                 opacity: 0;
             }
@@ -119,15 +128,6 @@
                 .banner-slide img.active {
                     opacity: 1;
                 }
-
-        footer {
-            background: #222;
-            color: #aaa;
-            text-align: center;
-            padding: 20px 0;
-            margin-top: 40px;
-            font-size: 14px;
-        }
 
         @@media (max-width: 768px) {
             .search-form {
@@ -148,8 +148,10 @@
         <div class="container d-flex align-items-center justify-content-between" style="max-width:1200px;">
             <a asp-controller="Home" asp-action="Index" class="logo fw-bold">DreamShop</a>
 
-            <form class="search-form flex-grow-1 mx-4" style="max-width:400px;">
-                <input type="text" class="form-control" placeholder="Bạn muốn mua gì hôm nay?" />
+            <form asp-controller="Products" asp-action="Search" method="get"
+                  class="search-form flex-grow-1 mx-4" style="max-width:400px;">
+                <input type="text" name="keyword" class="form-control"
+                       placeholder="Bạn muốn mua gì hôm nay?" />
             </form>
 
             <div class="d-flex align-items-center gap-2">
@@ -175,7 +177,6 @@
         </div>
     </header>
 
-    @* Chỉ hiện banner ở trang chủ hoặc trang sản phẩm *@
     @{
         var controller = ViewContext.RouteData.Values["controller"]?.ToString();
         var action = ViewContext.RouteData.Values["action"]?.ToString();
@@ -187,62 +188,76 @@
     {
         <div class="banner-container">
             <div class="banner-slide">
-                <img src="/Banner/banne1.jpg" alt="Khuyến mãi 1" class="active" />
-                <img src="/Banner/banne2.jpg" alt="Khuyến mãi 2" />
-                <img src="/Banner/banne3.jpg" alt="Khuyến mãi 3" />
+                <img src="/Banner/banne1.jpg" class="active" />
+                <img src="/Banner/banne2.jpg" />
+                <img src="/Banner/banne3.jpg" />
             </div>
         </div>
     }
 
-    <main role="main" class="pb-3">
+    <main role="main" class="main-content pb-3">
         @RenderBody()
     </main>
 
-    <footer>
-        © 2025 DreamShop — Thiết kế bởi <strong>Bảo Gia</strong>
+    <footer style="background: linear-gradient(180deg, #FFC4D0 0%, #FF8FA8 100%); padding:40px 0; font-size:14px; color:#333;">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md-3 mb-4">
+                    <h5 class="fw-bold mb-3">VỀ DREAMSHOP</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-dark text-decoration-none">Giới thiệu</a></li>
+                        <li><a href="#" class="text-dark text-decoration-none">Tuyển dụng</a></li>
+                        <li><a href="#" class="text-dark text-decoration-none">Liên hệ</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <h5 class="fw-bold mb-3">CHÍNH SÁCH</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-dark text-decoration-none">Chính sách bảo hành</a></li>
+                        <li><a href="#" class="text-dark text-decoration-none">Chính sách giao hàng</a></li>
+                        <li><a href="#" class="text-dark text-decoration-none">Chính sách bảo mật</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <h5 class="fw-bold mb-3">THÔNG TIN</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-dark text-decoration-none">Hệ thống cửa hàng</a></li>
+                        <li><a href="#" class="text-dark text-decoration-none">Hướng dẫn mua hàng</a></li>
+                        <li><a href="#" class="text-dark text-decoration-none">Hướng dẫn thanh toán</a></li>
+                        <li><a href="#" class="text-dark text-decoration-none">Hướng dẫn trả góp</a></li>
+                        <li><a href="#" class="text-dark text-decoration-none">Tra cứu địa chỉ bảo hành</a></li>
+                        <li><a href="#" class="text-dark text-decoration-none">Build PC</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <h5 class="fw-bold mb-3">TỔNG ĐÀI HỖ TRỢ (8:00 - 21:00)</h5>
+                    <p class="m-0">Mua hàng: <b>1900.0001</b></p>
+                    <p class="m-0">Bảo hành: <b>1900.0002</b></p>
+                    <p class="m-0">Khiếu nại: <b>1800.0003</b></p>
+                    <p>Email: support@dreamshop.com</p>
+                </div>
+
+            </div>
+
+            <div class="text-center mb-3">
+                <h6 class="fw-bold">KẾT NỐI VỚI CHÚNG TÔI</h6>
+                <img src="/img/fbo.png" width="32" class="mx-2" />
+                <img src="/img/tiktok.png" width="32" class="mx-2" />
+                <img src="/img/youtube.png" width="32" class="mx-2" />
+                <img src="/img/zalo.png" width="32" class="mx-2" />
+            </div>
+
+            <div class="text-center">
+                © 2025 DreamShop — Thiết kế bởi <strong>Bảo Gia</strong>
+            </div>
+
+        </div>
     </footer>
 
-    <!-- 🔹 Modal Đăng nhập -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-4" style="border-radius: 15px; background: #fff0f5;">
-                <h4 class="text-center text-danger mb-3">Đăng nhập tài khoản</h4>
-                <form asp-controller="Account" asp-action="Login" method="post">
-                    <input type="text" name="username" class="form-control mb-2" placeholder="Tên đăng nhập" required />
-                    <input type="password" name="password" class="form-control mb-3" placeholder="Mật khẩu" required />
-                    <button type="submit" class="btn btn-danger w-100">Đăng nhập</button>
-                    <p class="text-center mt-2">
-                        Chưa có tài khoản?
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#registerModal" data-bs-dismiss="modal">Đăng ký ngay</a>
-                    </p>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- 🔹 Modal Đăng ký -->
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-4" style="border-radius: 15px; background: #fff0f5;">
-                <h4 class="text-center text-danger mb-3">Đăng ký tài khoản</h4>
-                <form asp-controller="Account" asp-action="Register" method="post">
-                    <input type="text" name="Username" class="form-control mb-2" placeholder="Tên đăng nhập" required />
-                    <input type="password" name="Password" class="form-control mb-2" placeholder="Mật khẩu" required />
-                    <input type="text" name="Email" class="form-control mb-3" placeholder="Email (tùy chọn)" />
-                    <button type="submit" class="btn btn-danger w-100">Đăng ký</button>
-                    <p class="text-center mt-2">
-                        Đã có tài khoản?
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">Đăng nhập</a>
-                    </p>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- 🔁 Script tự động chuyển banner -->
     <script>
         const slides = document.querySelectorAll('.banner-slide img');
         let currentIndex = 0;
@@ -255,6 +270,9 @@
             }, 4000);
         }
     </script>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     @RenderSection("Scripts", required: false)
 </body>

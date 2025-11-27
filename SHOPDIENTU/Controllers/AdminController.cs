@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SHOPDIENTU.Data;
 using SHOPDIENTU.Models;
 
@@ -15,12 +16,11 @@ namespace SHOPDIENTU.Controllers
             _env = env;
         }
 
-        // ==================== QUẢN LÝ SẢN PHẨM ====================
         public IActionResult Index()
         {
             var products = _context.Products.ToList();
-            var users = _context.Users.ToList(); // 🆕 Thêm user vào view model
-            ViewBag.Users = users;               // 🆕 Gửi qua view
+            var users = _context.Users.ToList(); 
+            ViewBag.Users = users;             
             return View(products);
         }
 
@@ -109,8 +109,6 @@ namespace SHOPDIENTU.Controllers
             return RedirectToAction("Index");
         }
 
-        // ==================== 🧩 QUẢN LÝ NGƯỜI DÙNG ====================
-        // 🆕 Xem danh sách user ngay trên tab "Người dùng"
         [HttpGet]
         public IActionResult GetUsersPartial()
         {
@@ -118,7 +116,7 @@ namespace SHOPDIENTU.Controllers
             return PartialView("_UserListPartial", users);
         }
 
-        // 🆕 Xóa tài khoản người dùng
+
         public IActionResult DeleteUser(int id)
         {
             var user = _context.Users.Find(id);
@@ -129,5 +127,28 @@ namespace SHOPDIENTU.Controllers
             }
             return RedirectToAction("Index");
         }
+        public IActionResult Orders()
+        {
+            var orders = _context.Orders
+                                 .Include(o => o.Items)
+                                 .ThenInclude(i => i.Product)
+                                 .OrderByDescending(o => o.Id)
+                                 .ToList();
+            return View(orders);
+        }
+
+        public IActionResult OrderDetails(int id)
+        {
+            var order = _context.Orders
+                                .Include(o => o.Items)
+                                .ThenInclude(i => i.Product)
+                                .FirstOrDefault(o => o.Id == id);
+
+            if (order == null)
+                return NotFound();
+
+            return View(order);
+        }
+
     }
 }

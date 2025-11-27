@@ -12,6 +12,7 @@ namespace SHOPDIENTU.Models
         public string? Category { get; set; }
         public string? Brand { get; set; }
         public string? Description { get; set; }
+   
 
         [NotMapped]
         public IFormFile? ImageFile { get; set; }

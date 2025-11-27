@@ -54,7 +54,7 @@
     .product-card {
         background: #fff;
         border-radius: 10px;
-        width: 250px; /* 🔹 rộng hơn một chút cho cân đối */
+        width: 250px; 
         box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         text-align: center;
         transition: all 0.3s;
@@ -62,7 +62,7 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        height: 360px; /* 🔹 cố định chiều cao để đều hàng */
+        height: 360px; 
     }
 
         .product-card:hover {
@@ -73,7 +73,7 @@
         .product-card img {
             width: 100%;
             height: 180px;
-            object-fit: contain; /* 🔹 ảnh không bị méo, vẫn giữ tỉ lệ */
+            object-fit: contain; 
             padding: 10px;
         }
 
@@ -83,7 +83,7 @@
             font-weight: 600;
             margin: 5px 10px;
             line-height: 1.3em;
-            height: 40px; /* 🔹 giới hạn 2 dòng, đều nhau */
+            height: 40px; 
             overflow: hidden;
         }
 
@@ -116,13 +116,10 @@
     Danh mục: @Context.Request.Query["category"]
 </h2>
 
-<!-- 🔎 Bộ lọc -->
 <div class="filter-bar">
     <form method="get" asp-controller="Products" asp-action="Category">
-        <!-- Giữ lại category hiện tại khi lọc -->
         <input type="hidden" name="category" value="@Context.Request.Query["category"]" />
 
-        <!-- Dropdown hãng lấy từ ViewBag -->
         <select name="brand">
             <option value="">-- Chọn hãng --</option>
             @if (ViewBag.Brands != null)
@@ -145,7 +142,6 @@
     </form>
 </div>
 
-<!-- 💥 Danh sách sản phẩm -->
 <div class="product-grid">
     @if (Model.Count == 0)
     {

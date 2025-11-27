@@ -1,0 +1,201 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Thanh toán";
+}
+
+<style>
+    body {
+        background: #f6f6f6;
+    }
+
+    .payment-wrapper {
+        width: 75%;
+        margin: 30px auto;
+    }
+
+    .steps {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 25px;
+        padding: 10px 0;
+        border-bottom: 2px solid #eee;
+    }
+
+    .step {
+        flex: 1;
+        text-align: center;
+        font-size: 18px;
+        font-weight: 600;
+        padding-bottom: 10px;
+        color: #888;
+    }
+
+        .step.active {
+            color: #d70018;
+            border-bottom: 3px solid #d70018;
+        }
+
+    .section-box {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .payment-method {
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: .2s;
+    }
+
+        .payment-method.active {
+            border-color: #d70018;
+            background: #fff4f4;
+        }
+
+    .order-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        font-size: 16px;
+        color: #444;
+    }
+
+        .order-row.bold {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+    .btn-pay {
+        background: #d70018;
+        color: white;
+        width: 100%;
+        padding: 18px;
+        border-radius: 12px;
+        font-size: 20px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    #qrModal {
+        display: none;
+        position: fixed;
+        z-index: 99999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.55);
+    }
+
+    #qrContent {
+        width: 420px;
+        margin: 80px auto;
+        background: white;
+        padding: 25px;
+        border-radius: 14px;
+        text-align: center;
+    }
+</style>
+
+<div class="payment-wrapper">
+
+    <div class="steps">
+        <div class="step">1. Thông tin</div>
+        <div class="step active">2. Thanh toán</div>
+    </div>
+
+    <div class="section-box">
+        <div class="section-title">💳 Chọn phương thức thanh toán</div>
+
+        <div id="cod" class="payment-method" onclick="selectPay('cod')">
+            <span>Thanh toán khi nhận hàng (COD)</span>
+            <i class="fa-solid fa-truck"></i>
+        </div>
+
+        <div id="bank" class="payment-method" onclick="selectPay('bank')">
+            <span>Chuyển khoản ngân hàng</span>
+            <i class="fa-solid fa-money-bill-transfer"></i>
+        </div>
+
+        <div id="momo" class="payment-method" onclick="selectPay('momo')">
+            <span>Thanh toán qua MoMo</span>
+            <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" width="55" />
+        </div>
+    </div>
+
+    <div class="section-box">
+        <div class="section-title">📦 Chi tiết đơn hàng</div>
+
+        <div class="order-row">
+            <span>Số lượng sản phẩm</span>
+            <span>@ViewBag.TotalItems</span>
+        </div>
+
+        <div class="order-row">
+            <span>Tổng tiền hàng</span>
+            <span>@ViewBag.SubTotal.ToString("N0") đ</span>
+        </div>
+
+        <div class="order-row bold">
+            <span>Tổng thanh toán</span>
+            <span style="color:#d70018">@ViewBag.Total.ToString("N0") đ</span>
+        </div>
+    </div>
+
+    <button class="btn-pay" onclick="submitPayment()">Thanh toán</button>
+
+</div>
+
+<div id="qrModal">
+    <div id="qrContent">
+        <h3>Quét mã QR để chuyển khoản</h3>
+        <img src="https://img.vietqr.io/image/VCB-1055652265-compact.png?amount=@ViewBag.Total&addInfo=Thanh toán đơn hàng" width="300" />
+        <br /><br />
+        <button class="btn-pay" onclick="closeQR()">Tôi đã chuyển khoản</button>
+    </div>
+</div>
+
+<script>
+    let selected = "cod";
+
+    function selectPay(type) {
+        selected = type;
+
+        document.querySelectorAll(".payment-method")
+            .forEach(e => e.classList.remove("active"));
+
+        document.getElementById(type).classList.add("active");
+
+        if (type === "bank") {
+            openQR();
+        }
+    }
+
+    function submitPayment() {
+        if (selected === "bank") {
+            openQR();
+            return;
+        }
+        window.location.href = "/Checkout/Pay?method=" + selected;
+    }
+
+    function openQR() { document.getElementById("qrModal").style.display = "block"; }
+    function closeQR() { window.location.href = "/Checkout/Pay?method=bank"; }
+</script>
